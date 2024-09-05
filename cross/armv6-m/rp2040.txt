@@ -24,8 +24,7 @@ cpp_args = common_args + [
 c_args = common_args
 cpp_link_args = common_args + [
     '-nostartfiles',
-    '-Wl,--script=' + linker_script,
-    '-Wl,--verbose',]
+    '-Wl,--script=' + linker_script,]
 
 
 [host_machine]
