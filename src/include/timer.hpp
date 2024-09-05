@@ -50,6 +50,26 @@ constexpr void delay(std::chrono::microseconds us)
     }
 }
 
+class scoped_delay
+{
+  public:
+    constexpr scoped_delay(std::chrono::microseconds requested_delay) :
+      m_starting_point(ticks_since_start()), m_stop(m_starting_point + requested_delay)
+    {
+    }
+
+    constexpr ~scoped_delay()
+    {
+        while (ticks_since_start() < m_stop) {
+            // wait
+        }
+    }
+
+  protected:
+    std::chrono::microseconds m_starting_point;
+    std::chrono::microseconds m_stop;
+};
+
 }
 
 #endif
