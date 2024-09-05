@@ -49,9 +49,8 @@ class hd44780
   public:
     using interface = Interface;
     static constexpr configuration config = Config;
-    static_assert(
-      config.lines != 1 || config.lines != 2 || config.lines != 4,
-      "Invalid value for configuration::lines (select one of 1, 2 or 4");
+    static_assert(config.lines != 1 || config.lines != 2 || config.lines != 4,
+                  "Invalid value for configuration::lines (select one of 1, 2 or 4");
     static_assert(config.columns <= 40,
                   "Invalid value for configuration::columns. Maximum "
                   "supported value is 40");
@@ -63,11 +62,10 @@ class hd44780
         interface::init_mcu_interface();
         interface::init_lcd_interface();
 
-        constexpr lines number_of_lines =
-          (Config.lines > 1 ? lines::two_lines : lines::one_line);
+        constexpr lines number_of_lines = (Config.lines > 1 ? lines::two_lines : lines::one_line);
 
-        interface::send_instruction(instructions::function_set(
-          interface::lcd_interface, number_of_lines, config.font_size));
+        interface::send_instruction(
+          instructions::function_set(interface::lcd_interface, number_of_lines, config.font_size));
 
         interface::delay(1ms);
 
@@ -78,8 +76,7 @@ class hd44780
         interface::send_instruction(instructions::clear_display());
         interface::delay(2ms);
 
-        interface::send_instruction(
-          instructions::entry_mode_set(mode::increment, shift::off));
+        interface::send_instruction(instructions::entry_mode_set(mode::increment, shift::off));
 
         interface::delay(1ms);
 
@@ -114,11 +111,9 @@ class hd44780
         interface::send_instruction(instructions::ddram_set(addr));
     }
 
-    static constexpr void display_on(cursor cursor = cursor::off,
-                                     blink blink = blink::off)
+    static constexpr void display_on(cursor cursor = cursor::off, blink blink = blink::off)
     {
-        interface::send_instruction(
-          instructions::display_on_off(power::on, cursor, blink));
+        interface::send_instruction(instructions::display_on_off(power::on, cursor, blink));
     }
 
     static constexpr void display_off()

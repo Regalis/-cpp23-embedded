@@ -149,39 +149,33 @@ class pad
 {
   private:
     // Calculate PAD registers offset
-    consteval static platform::reg_ptr_t offset_addr(
-      typename T::pad requested_pad)
+    consteval static platform::reg_ptr_t offset_addr(typename T::pad requested_pad)
     {
         return sizeof(platform::reg_val_t) +
-               (std::to_underlying(requested_pad) *
-                sizeof(platform::reg_val_t));
+               (std::to_underlying(requested_pad) * sizeof(platform::reg_val_t));
     }
 
   public:
     using pad_bits = platform::registers::gpio_pads_bits;
-    using pad_reg =
-      platform::rw_reg<T::base_addr, offset_addr(specific_pad), pad_bits>;
+    using pad_reg = platform::rw_reg<T::base_addr, offset_addr(specific_pad), pad_bits>;
 
-    constexpr static platform::reg_val_t calculate_value(
-      pads::slew_rate slew_rate,
-      pads::schmitt_trigger schmitt_trigger,
-      pads::pull_down pull_down,
-      pads::pull_up pull_up,
-      pads::drive_strength drive_strength,
-      pads::input input,
-      pads::output output)
+    constexpr static platform::reg_val_t calculate_value(pads::slew_rate slew_rate,
+                                                         pads::schmitt_trigger schmitt_trigger,
+                                                         pads::pull_down pull_down,
+                                                         pads::pull_up pull_up,
+                                                         pads::drive_strength drive_strength,
+                                                         pads::input input,
+                                                         pads::output output)
     {
         using platform::registers::gpio_pads_bits;
-        const platform::reg_val_t target_value = bitwise_or(
-          (std::to_underlying(slew_rate) << bit_pos(gpio_pads_bits::slewfast)),
-          (std::to_underlying(schmitt_trigger)
-           << bit_pos(gpio_pads_bits::schmitt)),
-          (std::to_underlying(pull_down) << bit_pos(gpio_pads_bits::pde)),
-          (std::to_underlying(pull_up) << bit_pos(gpio_pads_bits::pue)),
-          (std::to_underlying(drive_strength)
-           << bit_pos(gpio_pads_bits::drive0)),
-          (std::to_underlying(input) << bit_pos(gpio_pads_bits::ie)),
-          (std::to_underlying(output) << bit_pos(gpio_pads_bits::od)));
+        const platform::reg_val_t target_value =
+          bitwise_or((std::to_underlying(slew_rate) << bit_pos(gpio_pads_bits::slewfast)),
+                     (std::to_underlying(schmitt_trigger) << bit_pos(gpio_pads_bits::schmitt)),
+                     (std::to_underlying(pull_down) << bit_pos(gpio_pads_bits::pde)),
+                     (std::to_underlying(pull_up) << bit_pos(gpio_pads_bits::pue)),
+                     (std::to_underlying(drive_strength) << bit_pos(gpio_pads_bits::drive0)),
+                     (std::to_underlying(input) << bit_pos(gpio_pads_bits::ie)),
+                     (std::to_underlying(output) << bit_pos(gpio_pads_bits::od)));
         return target_value;
     }
 
@@ -193,13 +187,8 @@ class pad
                                     pads::input input,
                                     pads::output output)
     {
-        pad_reg::set_value(calculate_value(slew_rate,
-                                           schmitt_trigger,
-                                           pull_down,
-                                           pull_up,
-                                           drive_strength,
-                                           input,
-                                           output));
+        pad_reg::set_value(calculate_value(
+          slew_rate, schmitt_trigger, pull_down, pull_up, drive_strength, input, output));
     }
 
     constexpr static void output_enable()
@@ -224,12 +213,10 @@ class pad
 
     constexpr static void set_drive_strength(drive_strength strength)
     {
-        constexpr platform::reg_val_t drive_bits_mask =
-          bitmask(pad_bits::drive0, pad_bits::drive1);
+        constexpr platform::reg_val_t drive_bits_mask = bitmask(pad_bits::drive0, pad_bits::drive1);
 
-        pad_reg::set_value(
-          (pad_reg::value() & ~drive_bits_mask) |
-          (std::to_underlying(strength) << bit_pos(pad_bits::drive0)));
+        pad_reg::set_value((pad_reg::value() & ~drive_bits_mask) |
+                           (std::to_underlying(strength) << bit_pos(pad_bits::drive0)));
     }
 
     constexpr static void pull_up_enable()

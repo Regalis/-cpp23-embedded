@@ -122,8 +122,7 @@ constexpr void toggle(const gpio_pin auto&... gpio_pins)
     toggle(gpio_pins.pin_no...);
 }
 
-constexpr void function_select(functions func,
-                               const gpio_pin auto&... gpio_pins)
+constexpr void function_select(functions func, const gpio_pin auto&... gpio_pins)
 {
     ((function_select<gpio_pins.pin_no>(func)), ...);
 }

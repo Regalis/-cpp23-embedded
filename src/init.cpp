@@ -38,8 +38,7 @@ extern "C"
         extern std::uint8_t __bss_start;
         extern std::uint8_t __bss_end;
 
-        const std::size_t data_size =
-          static_cast<std::size_t>(&__data_end - &__data_start);
+        const std::size_t data_size = static_cast<std::size_t>(&__data_end - &__data_start);
 
         // Copy .data section from FLASH to SRAM
         std::memcpy(&__data_start, &__data_lma_start, data_size);
@@ -51,4 +50,3 @@ extern "C"
         std::unreachable();
     }
 }
-

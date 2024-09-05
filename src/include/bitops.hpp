@@ -70,26 +70,22 @@ constexpr auto bitmask(const valid_bit_position auto&... bit_positon)
     return bitwise_or(bit_value(bit_positon)...);
 }
 
-constexpr void set_bits(auto& lhs,
-                        const valid_bit_position auto&... bit_position)
+constexpr void set_bits(auto& lhs, const valid_bit_position auto&... bit_position)
 {
     lhs = bitwise_or(lhs, bit_value(bit_position)...);
 }
 
-constexpr void reset_bits(auto& lhs,
-                          const valid_bit_position auto&... bit_position)
+constexpr void reset_bits(auto& lhs, const valid_bit_position auto&... bit_position)
 {
     lhs = lhs & ~(bitmask(bit_position...));
 }
 
-constexpr void toggle_bits(auto& lhs,
-                           const valid_bit_position auto&... bit_position)
+constexpr void toggle_bits(auto& lhs, const valid_bit_position auto&... bit_position)
 {
     lhs = lhs ^ bitmask(bit_position...);
 }
 
-constexpr auto read_bits(const auto& lhs,
-                         const valid_bit_position auto&... bit_position)
+constexpr auto read_bits(const auto& lhs, const valid_bit_position auto&... bit_position)
 {
     return (lhs & bitmask(bit_position...));
 }

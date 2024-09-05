@@ -36,8 +36,7 @@ template<reg_ptr_t Base,
          reg_ptr_t Offset,
          typename BitsType = unsigned int,
          hwio::hwio_region... Region>
-using reg_base =
-  hwio::volatile_reg<reg_ptr_t, reg_val_t, Base, Offset, BitsType, Region...>;
+using reg_base = hwio::volatile_reg<reg_ptr_t, reg_val_t, Base, Offset, BitsType, Region...>;
 
 template<reg_ptr_t Base,
          reg_ptr_t Offset,
@@ -51,9 +50,7 @@ template<reg_ptr_t Base,
          hwio::hwio_region... Region>
 using rw_reg = hwio::rw<reg_base<Base, Offset, BitsType, Region...>>;
 
-template<reg_ptr_t Addr,
-         typename BitsType = unsigned int,
-         hwio::hwio_region... Region>
+template<reg_ptr_t Addr, typename BitsType = unsigned int, hwio::hwio_region... Region>
 using rw_reg_direct = hwio::rw<reg_base<Addr, 0, BitsType, Region...>>;
 
 enum class pins : platform::reg_val_t
@@ -117,8 +114,7 @@ struct gpio_ctrl_for
 {
     constexpr static reg_ptr_t base = io_bank0_base;
     constexpr static reg_ptr_t offset =
-      ((sizeof(platform::reg_val_t) * 2) * bit_pos(pin_no) +
-       sizeof(platform::reg_val_t));
+      ((sizeof(platform::reg_val_t) * 2) * bit_pos(pin_no) + sizeof(platform::reg_val_t));
     constexpr static reg_ptr_t addr = base + offset;
 };
 
@@ -126,8 +122,7 @@ template<platform::pins pin_no>
 struct gpio_status_for
 {
     constexpr static reg_ptr_t base = io_bank0_base;
-    constexpr static reg_ptr_t offset =
-      ((sizeof(platform::reg_val_t) * 2) * bit_pos(pin_no));
+    constexpr static reg_ptr_t offset = ((sizeof(platform::reg_val_t) * 2) * bit_pos(pin_no));
 };
 }
 
@@ -304,8 +299,7 @@ enum class voltage_select_bits : reg_val_t
     voltage = 0,
 };
 
-using voltage_select =
-  rw_reg<addrs::pads_qspi_base, 0x00, voltage_select_bits>;
+using voltage_select = rw_reg<addrs::pads_qspi_base, 0x00, voltage_select_bits>;
 using gpio_qspi_sclk = rw_reg<addrs::pads_qspi_base, 0x04, gpio_pads_bits>;
 using gpio_qspi_sd0 = rw_reg<addrs::pads_qspi_base, 0x08, gpio_pads_bits>;
 using gpio_qspi_sd1 = rw_reg<addrs::pads_qspi_base, 0x0c, gpio_pads_bits>;
@@ -373,18 +367,14 @@ using prim_region_postdiv1 = hwio::region<reg_val_t, 16, 3>;
 
 struct sys
 {
-    static constexpr registers::reset_bits reset_bit =
-      registers::reset_bits::pll_sys;
+    static constexpr registers::reset_bits reset_bit = registers::reset_bits::pll_sys;
 
-    using cs =
-      rw_reg<registers::addrs::pll_sys_base, 0x0, cs_bits, cs_region_refdiv>;
+    using cs = rw_reg<registers::addrs::pll_sys_base, 0x0, cs_bits, cs_region_refdiv>;
 
     using pwr = rw_reg<registers::addrs::pll_sys_base, 0x4, pwr_bits>;
 
-    using fbdiv_int = rw_reg<registers::addrs::pll_sys_base,
-                             0x8,
-                             fbdiv_int_bits,
-                             fbdiv_int_region_value>;
+    using fbdiv_int =
+      rw_reg<registers::addrs::pll_sys_base, 0x8, fbdiv_int_bits, fbdiv_int_region_value>;
 
     using prim = rw_reg<registers::addrs::pll_sys_base,
                         0xc,
@@ -396,18 +386,14 @@ struct sys
 struct usb
 {
 
-    static constexpr registers::reset_bits reset_bit =
-      registers::reset_bits::pll_usb;
+    static constexpr registers::reset_bits reset_bit = registers::reset_bits::pll_usb;
 
-    using cs =
-      rw_reg<registers::addrs::pll_usb_base, 0x0, cs_bits, cs_region_refdiv>;
+    using cs = rw_reg<registers::addrs::pll_usb_base, 0x0, cs_bits, cs_region_refdiv>;
 
     using pwr = rw_reg<registers::addrs::pll_usb_base, 0x4, pwr_bits>;
 
-    using fbdiv_int = rw_reg<registers::addrs::pll_usb_base,
-                             0x8,
-                             fbdiv_int_bits,
-                             fbdiv_int_region_value>;
+    using fbdiv_int =
+      rw_reg<registers::addrs::pll_usb_base, 0x8, fbdiv_int_bits, fbdiv_int_region_value>;
 
     using prim = rw_reg<registers::addrs::pll_usb_base,
                         0xc,
@@ -433,8 +419,7 @@ enum class ctrl_region_enable_values : reg_val_t
     enable = 0xfab,
 };
 
-using ctrl_region_freq_range =
-  hwio::region<ctrl_region_freq_range_values, 0, 12>;
+using ctrl_region_freq_range = hwio::region<ctrl_region_freq_range_values, 0, 12>;
 using ctrl_region_enable = hwio::region<ctrl_region_enable_values, 12, 12>;
 
 enum class status_bits : reg_val_t
@@ -451,8 +436,7 @@ enum class status_region_freq_range_values : reg_val_t
     range_1_15_mhz = 0x0,
 };
 
-using status_region_freq_range =
-  hwio::region<status_region_freq_range_values, 0, 2>;
+using status_region_freq_range = hwio::region<status_region_freq_range_values, 0, 2>;
 
 enum class dormant_region_values : reg_val_t
 {
@@ -471,23 +455,12 @@ using startup_region_delay = hwio::region<reg_val_t, 0, 14>;
 
 using count_region = hwio::region<reg_val_t, 0, 8>;
 
-using ctrl = rw_reg<registers::addrs::xosc_base,
-                    0x00,
-                    reg_val_t,
-                    ctrl_region_enable,
-                    ctrl_region_freq_range>;
-using status = rw_reg<registers::addrs::xosc_base,
-                      0x04,
-                      status_bits,
-                      status_region_freq_range>;
-using dormant =
-  rw_reg<registers::addrs::xosc_base, 0x08, reg_val_t, dormant_region>;
-using startup = rw_reg<registers::addrs::xosc_base,
-                       0x0c,
-                       startup_bits,
-                       startup_region_delay>;
-using count =
-  rw_reg<registers::addrs::xosc_base, 0x1c, reg_val_t, count_region>;
+using ctrl =
+  rw_reg<registers::addrs::xosc_base, 0x00, reg_val_t, ctrl_region_enable, ctrl_region_freq_range>;
+using status = rw_reg<registers::addrs::xosc_base, 0x04, status_bits, status_region_freq_range>;
+using dormant = rw_reg<registers::addrs::xosc_base, 0x08, reg_val_t, dormant_region>;
+using startup = rw_reg<registers::addrs::xosc_base, 0x0c, startup_bits, startup_region_delay>;
+using count = rw_reg<registers::addrs::xosc_base, 0x1c, reg_val_t, count_region>;
 
 // experimental namespace
 // convenient regions, by value
@@ -498,10 +471,8 @@ constexpr ctrl_region_freq_range range_1_15_mhz
 }
 
 namespace ctrl::enable {
-constexpr ctrl_region_enable enable
-  [[maybe_unused]]{ctrl_region_enable_values::enable};
-constexpr ctrl_region_enable disable
-  [[maybe_unused]]{ctrl_region_enable_values::disable};
+constexpr ctrl_region_enable enable [[maybe_unused]]{ctrl_region_enable_values::enable};
+constexpr ctrl_region_enable disable [[maybe_unused]]{ctrl_region_enable_values::disable};
 }
 }
 
@@ -538,8 +509,7 @@ enum class clk_gpout_ctrl_region_auxsrc_values : reg_val_t
     clk_ref,
 };
 
-using clk_gpout_ctrl_region_auxsrc =
-  hwio::region<clk_gpout_ctrl_region_auxsrc_values, 5, 4>;
+using clk_gpout_ctrl_region_auxsrc = hwio::region<clk_gpout_ctrl_region_auxsrc_values, 5, 4>;
 using clk_gpout_ctrl_region_phase = hwio::region<reg_val_t, 16, 2>;
 
 using clk_div_region_frac = hwio::region<reg_val_t, 0, 8>;
@@ -570,10 +540,8 @@ enum class clk_ref_ctrl_region_auxsrc_values : reg_val_t
     clksrc_gpin1,
 };
 
-using clk_ref_ctrl_region_src =
-  hwio::region<clk_ref_ctrl_region_src_values, 0, 2>;
-using clk_ref_ctrl_region_auxsrc =
-  hwio::region<clk_ref_ctrl_region_auxsrc_values, 5, 2>;
+using clk_ref_ctrl_region_src = hwio::region<clk_ref_ctrl_region_src_values, 0, 2>;
+using clk_ref_ctrl_region_auxsrc = hwio::region<clk_ref_ctrl_region_auxsrc_values, 5, 2>;
 
 enum class clk_ref_div_bits : reg_val_t
 {
@@ -607,10 +575,8 @@ enum class clk_sys_ctrl_region_auxsrc_values : reg_val_t
     clksrc_gpin1,
 };
 
-using clk_sys_ctrl_region_src =
-  hwio::region<clk_sys_ctrl_region_src_values, 0, 1>;
-using clk_sys_ctrl_region_auxsrc =
-  hwio::region<clk_sys_ctrl_region_auxsrc_values, 5, 3>;
+using clk_sys_ctrl_region_src = hwio::region<clk_sys_ctrl_region_src_values, 0, 1>;
+using clk_sys_ctrl_region_auxsrc = hwio::region<clk_sys_ctrl_region_auxsrc_values, 5, 3>;
 
 enum class clk_sys_div_bits : reg_val_t
 {
@@ -670,8 +636,7 @@ enum class clk_peri_ctrl_region_auxsrc_values : reg_val_t
     clksrc_gpin1,
 };
 
-using clk_peri_ctrl_region_auxsrc =
-  hwio::region<clk_peri_ctrl_region_auxsrc_values, 5, 3>;
+using clk_peri_ctrl_region_auxsrc = hwio::region<clk_peri_ctrl_region_auxsrc_values, 5, 3>;
 
 enum class clk_usb_ctrl_bits : reg_val_t
 {
@@ -695,8 +660,7 @@ enum class clk_usb_ctrl_region_auxsrc_values : reg_val_t
     clksrc_gpin1,
 };
 
-using clk_usb_ctrl_region_auxsrc =
-  hwio::region<clk_usb_ctrl_region_auxsrc_values, 5, 3>;
+using clk_usb_ctrl_region_auxsrc = hwio::region<clk_usb_ctrl_region_auxsrc_values, 5, 3>;
 
 enum class clk_usb_div_bits : reg_val_t
 {
@@ -732,8 +696,7 @@ enum class clk_adc_ctrl_region_auxsrc_values
 
 using clk_rtc_ctrl_region_auxsrc_values = clk_adc_ctrl_region_auxsrc_values;
 
-using clk_adc_ctrl_region_auxsrc =
-  hwio::region<clk_adc_ctrl_region_auxsrc_values, 5, 2>;
+using clk_adc_ctrl_region_auxsrc = hwio::region<clk_adc_ctrl_region_auxsrc_values, 5, 2>;
 using clk_rtc_ctrl_region_auxsrc = clk_adc_ctrl_region_auxsrc;
 
 enum class clk_adc_div_bits : reg_val_t
@@ -889,9 +852,7 @@ struct clk_gpout
                        unsigned int,
                        clk_gpout_div_region_int,
                        clk_gpout_div_region_frac>;
-    using selected = ro_reg<registers::addrs::clocks_base,
-                            (index * 12UL) + 0x08UL,
-                            unsigned int>;
+    using selected = ro_reg<registers::addrs::clocks_base, (index * 12UL) + 0x08UL, unsigned int>;
 };
 
 }
@@ -916,10 +877,8 @@ struct clk_ref
                         clk_ref_ctrl_bits,
                         clk_ref_ctrl_region_src,
                         clk_ref_ctrl_region_auxsrc>;
-    using div = rw_reg<registers::addrs::clocks_base,
-                       0x34,
-                       clk_ref_div_bits,
-                       clk_ref_div_region_int>;
+    using div =
+      rw_reg<registers::addrs::clocks_base, 0x34, clk_ref_div_bits, clk_ref_div_region_int>;
     using selected = ro_reg<registers::addrs::clocks_base, 0x38, reg_val_t>;
 };
 
@@ -954,10 +913,8 @@ struct clk_peri
     using auxsrc = clk_peri_ctrl_region_auxsrc_values;
     constexpr static bool has_glitchless_mux = false;
 
-    using ctrl = rw_reg<registers::addrs::clocks_base,
-                        0x48,
-                        clk_peri_ctrl_bits,
-                        clk_peri_ctrl_region_auxsrc>;
+    using ctrl =
+      rw_reg<registers::addrs::clocks_base, 0x48, clk_peri_ctrl_bits, clk_peri_ctrl_region_auxsrc>;
     // TODO: The datasheet does not use this register...
     using div = rw_reg<registers::addrs::clocks_base,
                        0x4c,
@@ -975,14 +932,10 @@ struct clk_usb
     using auxsrc = clk_usb_ctrl_region_auxsrc_values;
     constexpr static bool has_glitchless_mux = false;
 
-    using ctrl = rw_reg<registers::addrs::clocks_base,
-                        0x54,
-                        clk_usb_ctrl_bits,
-                        clk_usb_ctrl_region_auxsrc>;
-    using div = rw_reg<registers::addrs::clocks_base,
-                       0x58,
-                       clk_usb_div_bits,
-                       clk_usb_div_region_int>;
+    using ctrl =
+      rw_reg<registers::addrs::clocks_base, 0x54, clk_usb_ctrl_bits, clk_usb_ctrl_region_auxsrc>;
+    using div =
+      rw_reg<registers::addrs::clocks_base, 0x58, clk_usb_div_bits, clk_usb_div_region_int>;
     using selected = ro_reg<registers::addrs::clocks_base, 0x5c, reg_val_t>;
 };
 
@@ -994,14 +947,10 @@ struct clk_adc
     using auxsrc = clk_adc_ctrl_region_auxsrc_values;
     constexpr static bool has_glitchless_mux = false;
 
-    using ctrl = rw_reg<registers::addrs::clocks_base,
-                        0x60,
-                        clk_adc_ctrl_bits,
-                        clk_adc_ctrl_region_auxsrc>;
-    using div = rw_reg<registers::addrs::clocks_base,
-                       0x64,
-                       clk_adc_div_bits,
-                       clk_adc_div_region_int>;
+    using ctrl =
+      rw_reg<registers::addrs::clocks_base, 0x60, clk_adc_ctrl_bits, clk_adc_ctrl_region_auxsrc>;
+    using div =
+      rw_reg<registers::addrs::clocks_base, 0x64, clk_adc_div_bits, clk_adc_div_region_int>;
     using selected = ro_reg<registers::addrs::clocks_base, 0x68, reg_val_t>;
 };
 
@@ -1013,14 +962,10 @@ struct clk_rtc
     using auxsrc = clk_rtc_ctrl_region_auxsrc_values;
     constexpr static bool has_glitchless_mux = false;
 
-    using ctrl = rw_reg<registers::addrs::clocks_base,
-                        0x6c,
-                        clk_rtc_ctrl_bits,
-                        clk_rtc_ctrl_region_auxsrc>;
-    using div = rw_reg<registers::addrs::clocks_base,
-                       0x70,
-                       clk_rtc_div_bits,
-                       clk_rtc_div_region_int>;
+    using ctrl =
+      rw_reg<registers::addrs::clocks_base, 0x6c, clk_rtc_ctrl_bits, clk_rtc_ctrl_region_auxsrc>;
+    using div =
+      rw_reg<registers::addrs::clocks_base, 0x70, clk_rtc_div_bits, clk_rtc_div_region_int>;
     using selected = ro_reg<registers::addrs::clocks_base, 0x74, reg_val_t>;
 };
 
@@ -1028,10 +973,8 @@ struct clk_sys_resus
 {
     constexpr static bool has_glitchless_mux = false;
 
-    using ctrl =
-      rw_reg<registers::addrs::clocks_base, 0x78, clk_sys_resus_ctrl_bits>;
-    using status =
-      ro_reg<registers::addrs::clocks_base, 0x7c, clk_sys_resus_status_bits>;
+    using ctrl = rw_reg<registers::addrs::clocks_base, 0x78, clk_sys_resus_ctrl_bits>;
+    using status = ro_reg<registers::addrs::clocks_base, 0x7c, clk_sys_resus_status_bits>;
 };
 
 // TODO: add fc0 registers
@@ -1076,11 +1019,8 @@ enum class tick_bits : reg_val_t
 using tick_region_cycles = hwio::region<uint32_t, 0, 9>;
 using tick_region_count = hwio::region<uint32_t, 11, 9>;
 
-using tick = rw_reg<registers::addrs::watchdog_base,
-                    0x2c,
-                    tick_bits,
-                    tick_region_cycles,
-                    tick_region_count>;
+using tick =
+  rw_reg<registers::addrs::watchdog_base, 0x2c, tick_bits, tick_region_cycles, tick_region_count>;
 
 }
 
@@ -1222,13 +1162,9 @@ enum class uartlcr_h_region_parity_values : reg_val_t
 
 using uartlcr_h_region_wlen = hwio::region<uartlcr_h_region_wlen_values, 5, 2>;
 using uartlcr_h_region_stop_bits =
-  hwio::region<uartlcr_h_region_stop_bits_values,
-               std::to_underlying(uartlcr_h_bits::stp2),
-               1>;
+  hwio::region<uartlcr_h_region_stop_bits_values, std::to_underlying(uartlcr_h_bits::stp2), 1>;
 using uartlcr_h_region_parity =
-  hwio::region<uartlcr_h_region_parity_values,
-               std::to_underlying(uartlcr_h_bits::eps),
-               1>;
+  hwio::region<uartlcr_h_region_parity_values, std::to_underlying(uartlcr_h_bits::eps), 1>;
 
 enum class uartcr_bits : reg_val_t
 {
@@ -1274,10 +1210,8 @@ enum class uartifls_region_rxiflsel_values : reg_val_t
     fifo_le_7_8_full,
 };
 
-using uartifls_region_rxiflsel =
-  hwio::region<uartifls_region_rxiflsel_values, 3, 3>;
-using uartifls_region_txiflsel =
-  hwio::region<uartifls_region_txiflsel_values, 0, 3>;
+using uartifls_region_rxiflsel = hwio::region<uartifls_region_rxiflsel_values, 3, 3>;
+using uartifls_region_txiflsel = hwio::region<uartifls_region_txiflsel_values, 0, 3>;
 
 enum class uartimsc_bits : reg_val_t
 {
@@ -1356,12 +1290,9 @@ struct uart_base
     using uartdr = rw_reg<base_addr, 0x000, uartdr_bits, uartdr_region_data>;
     using uartrsr = rw_reg<base_addr, 0x004, uartrsr_bits>;
     using uartfr = rw_reg<base_addr, 0x018, uartfr_bits>;
-    using uartilpr =
-      rw_reg<base_addr, 0x020, uartilpr_bits, uartilpr_region_ilpdvsr>;
-    using uartibrd =
-      rw_reg<base_addr, 0x024, uartibrd_bits, uartibrd_region_baud_divint>;
-    using uartfbrd =
-      rw_reg<base_addr, 0x028, uartfbrd_bits, uartfbrd_region_baud_divfrac>;
+    using uartilpr = rw_reg<base_addr, 0x020, uartilpr_bits, uartilpr_region_ilpdvsr>;
+    using uartibrd = rw_reg<base_addr, 0x024, uartibrd_bits, uartibrd_region_baud_divint>;
+    using uartfbrd = rw_reg<base_addr, 0x028, uartfbrd_bits, uartfbrd_region_baud_divfrac>;
     using uartlcr_h = rw_reg<base_addr,
                              0x02c,
                              uartlcr_h_bits,
@@ -1369,11 +1300,8 @@ struct uart_base
                              uartlcr_h_region_parity,
                              uartlcr_h_region_stop_bits>;
     using uartcr = rw_reg<base_addr, 0x030, uartcr_bits>;
-    using uartifls = rw_reg<base_addr,
-                            0x034,
-                            uartifls_bits,
-                            uartifls_region_rxiflsel,
-                            uartifls_region_txiflsel>;
+    using uartifls =
+      rw_reg<base_addr, 0x034, uartifls_bits, uartifls_region_rxiflsel, uartifls_region_txiflsel>;
     using uartimsc = rw_reg<base_addr, 0x038, uartimsc_bits>;
     using uartris = rw_reg<base_addr, 0x03c, uartris_bits>;
     using uartmis = rw_reg<base_addr, 0x040, uartmis_bits>;
@@ -1383,10 +1311,8 @@ struct uart_base
 
 }
 
-using uart0 = detail::uart_base<registers::addrs::uart0_base,
-                                registers::reset_bits::uart0>;
-using uart1 = detail::uart_base<registers::addrs::uart1_base,
-                                registers::reset_bits::uart1>;
+using uart0 = detail::uart_base<registers::addrs::uart0_base, registers::reset_bits::uart0>;
+using uart1 = detail::uart_base<registers::addrs::uart1_base, registers::reset_bits::uart1>;
 
 }
 
@@ -1470,14 +1396,9 @@ struct channel
       registers::addrs::pwm_base + (channels_addr_diff * channel_no);
 
     using csr = rw_reg<channel_base_addr, 0x00, csr_bits, csr_region_divmode>;
-    using div = rw_reg<channel_base_addr,
-                       0x04,
-                       div_bits,
-                       div_region_int,
-                       div_region_frac>;
+    using div = rw_reg<channel_base_addr, 0x04, div_bits, div_region_int, div_region_frac>;
     using ctr = rw_reg<channel_base_addr, 0x08, reg_val_t, ctr_region_counter>;
-    using cc =
-      rw_reg<channel_base_addr, 0x0c, reg_val_t, cc_region_a, cc_region_b>;
+    using cc = rw_reg<channel_base_addr, 0x0c, reg_val_t, cc_region_a, cc_region_b>;
     using top = rw_reg<channel_base_addr, 0x10, reg_val_t, top_region_wrap>;
 };
 

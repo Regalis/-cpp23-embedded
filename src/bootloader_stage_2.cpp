@@ -56,14 +56,13 @@ static inline void configure_pads()
     //       (solved with 'asm volatile'):
     //
 
-    const auto sd_value = pads::qspi_sd0::calculate_value(
-      pads::slew_rate::default_after_reset,
-      pads::schmitt_trigger::disable,
-      pads::pull_down::default_after_reset,
-      pads::pull_up::default_after_reset,
-      pads::drive_strength::default_after_reset,
-      pads::input::default_after_reset,
-      pads::output::default_after_reset);
+    const auto sd_value = pads::qspi_sd0::calculate_value(pads::slew_rate::default_after_reset,
+                                                          pads::schmitt_trigger::disable,
+                                                          pads::pull_down::default_after_reset,
+                                                          pads::pull_up::default_after_reset,
+                                                          pads::drive_strength::default_after_reset,
+                                                          pads::input::default_after_reset,
+                                                          pads::output::default_after_reset);
 
     constexpr auto qspi_base = pads::qspi::base_addr;
     constexpr auto qspi_sd0_offset = pads::qspi_sd0::pad_reg::offset;
@@ -112,13 +111,11 @@ constexpr static uint32_t read_flash_sreg(read_commands cmd)
 // TODO: provide abstractions for Winbond W25Q080 (and compatible)
 constexpr static void configure_flash(uint32_t expected_sreg2_value)
 {
-    platform::registers::ssi::dr0::set_value(
-      std::to_underlying(write_commands::write_enable));
+    platform::registers::ssi::dr0::set_value(std::to_underlying(write_commands::write_enable));
     __regalis_bootloader_wait_ssi_ready();
     // Discard the response
     platform::registers::ssi::dr0::value();
-    platform::registers::ssi::dr0::set_value(
-      std::to_underlying(write_commands::cmd_write_status));
+    platform::registers::ssi::dr0::set_value(std::to_underlying(write_commands::cmd_write_status));
     platform::registers::ssi::dr0::set_value(0);
     platform::registers::ssi::dr0::set_value(expected_sreg2_value);
     __regalis_bootloader_wait_ssi_ready();
@@ -136,11 +133,9 @@ constexpr static void configure_flash(uint32_t expected_sreg2_value)
 static inline void load_main_program()
 {
     // Vector table should be placed right after the bootloader
-    constexpr platform::reg_val_t vector_table_addr =
-      platform::registers::addrs::xip_base + 0x100;
+    constexpr platform::reg_val_t vector_table_addr = platform::registers::addrs::xip_base + 0x100;
     constexpr platform::reg_val_t vtor_table_reg_addr =
-      platform::registers::addrs::ppb_base +
-      platform::registers::addrs::m0plus_vtor_offset;
+      platform::registers::addrs::ppb_base + platform::registers::addrs::m0plus_vtor_offset;
 
     using cpu_vtor_reg = platform::rw_reg_direct<vtor_table_reg_addr>;
     using stack_pointer_reg = platform::ro_reg<vector_table_addr, 0x0>;
@@ -151,12 +146,11 @@ static inline void load_main_program()
     const auto stack_pointer = stack_pointer_reg::value();
     const auto reset_hander_addr = reset_hander_reg::value();
 
-    asm volatile(
-      "msr msp, %[stack_ptr]\n\t"
-      "bx %[reset_handler]\n\t"
-      :
-      : [stack_ptr] "r"(stack_pointer), [reset_handler] "r"(reset_hander_addr)
-      :);
+    asm volatile("msr msp, %[stack_ptr]\n\t"
+                 "bx %[reset_handler]\n\t"
+                 :
+                 : [stack_ptr] "r"(stack_pointer), [reset_handler] "r"(reset_hander_addr)
+                 :);
 
     std::unreachable();
 }
@@ -166,14 +160,11 @@ extern "C"
 
     constexpr static void __regalis_bootloader_wait_ssi_ready()
     {
-        constexpr uint32_t transmit_fifo_empty =
-          bit_value(platform::registers::ssi::sr_bits::tfe);
-        constexpr uint32_t busy_flag =
-          bit_value(platform::registers::ssi::sr_bits::busy);
+        constexpr uint32_t transmit_fifo_empty = bit_value(platform::registers::ssi::sr_bits::tfe);
+        constexpr uint32_t busy_flag = bit_value(platform::registers::ssi::sr_bits::busy);
 
         while (true) {
-            platform::reg_val_t status_register =
-              platform::registers::ssi::sr::value();
+            platform::reg_val_t status_register = platform::registers::ssi::sr::value();
             if (!(status_register & transmit_fifo_empty)) {
                 continue;
             }
@@ -238,8 +229,7 @@ extern "C"
 
         constexpr uint32_t expected_sreg2_value = 0x02UL;
 
-        if (read_flash_sreg(read_commands::read_status2) !=
-            expected_sreg2_value) {
+        if (read_flash_sreg(read_commands::read_status2) != expected_sreg2_value) {
             configure_flash(expected_sreg2_value);
         }
 

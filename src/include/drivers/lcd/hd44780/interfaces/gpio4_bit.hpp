@@ -51,8 +51,7 @@ class gpio_4bit
     static constexpr auto descriptor = InterfaceDescriptor;
     static constexpr interface lcd_interface = interface::parallel_4_bit;
 
-    static constexpr auto pin_register_select =
-      gpio::pin<descriptor.register_select>{};
+    static constexpr auto pin_register_select = gpio::pin<descriptor.register_select>{};
     static constexpr auto pin_enable = gpio::pin<descriptor.enable>{};
     static constexpr auto pin_data4 = gpio::pin<descriptor.data4>{};
     static constexpr auto pin_data5 = gpio::pin<descriptor.data5>{};
@@ -68,12 +67,8 @@ class gpio_4bit
                               pin_data5,
                               pin_data6,
                               pin_data7);
-        gpio::set_as_output(pin_register_select,
-                            pin_enable,
-                            pin_data4,
-                            pin_data5,
-                            pin_data6,
-                            pin_data7);
+        gpio::set_as_output(
+          pin_register_select, pin_enable, pin_data4, pin_data5, pin_data6, pin_data7);
     }
 
     static constexpr void init_lcd_interface()
@@ -145,10 +140,8 @@ class gpio_4bit
         }
         gpio::set_low(pin_data4, pin_data5, pin_data6, pin_data7);
 
-        constexpr std::array pins{pin_data4.pin_no,
-                                  pin_data5.pin_no,
-                                  pin_data6.pin_no,
-                                  pin_data7.pin_no};
+        constexpr std::array pins{
+          pin_data4.pin_no, pin_data5.pin_no, pin_data6.pin_no, pin_data7.pin_no};
 
         auto is_high = [&data](const auto& bit_pos_and_pin) -> bool {
             const auto& [bit_position, pin] = bit_pos_and_pin;
@@ -159,9 +152,8 @@ class gpio_4bit
             gpio::set_high(pin);
         };
 
-        auto pins_to_set = std::views::enumerate(pins) |
-                           std::views::filter(is_high) |
-                           std::views::elements<1>;
+        auto pins_to_set =
+          std::views::enumerate(pins) | std::views::filter(is_high) | std::views::elements<1>;
 
         std::ranges::for_each(pins_to_set, set_pin_high);
 

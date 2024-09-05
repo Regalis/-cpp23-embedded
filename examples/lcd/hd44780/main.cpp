@@ -58,12 +58,11 @@ int main()
                                      .data7 = platform::pins::gpio21};
 
     // Define your LCD hardware layout
-    constexpr auto configuration = hd44780::configuration{
-      .columns = 16, .lines = 2, .font_size = hd44780::font::font_5x8};
+    constexpr auto configuration =
+      hd44780::configuration{.columns = 16, .lines = 2, .font_size = hd44780::font::font_5x8};
 
     // Get type of the driver based on your descriptor and configuration
-    using lcd =
-      hd44780::hd44780<hd44780::interface_for<descriptor>, configuration>;
+    using lcd = hd44780::hd44780<hd44780::interface_for<descriptor>, configuration>;
 
     timer::delay(500ms);
 

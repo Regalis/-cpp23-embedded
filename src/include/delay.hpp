@@ -28,4 +28,3 @@ static inline void delay(uint64_t num)
         counter = counter - 1;
     }
 }
-

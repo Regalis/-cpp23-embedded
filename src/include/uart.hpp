@@ -46,8 +46,7 @@ using word_length = platform::uart::uartlcr_h_region_wlen_values;
 
 constexpr baudrate_calculation baudrate_calculate(uint32_t requested_baudrate)
 {
-    uint32_t baud_rate_div =
-      (8 * board::clocks::peri_clk_hz / requested_baudrate);
+    uint32_t baud_rate_div = (8 * board::clocks::peri_clk_hz / requested_baudrate);
     uint32_t integer_divisor = baud_rate_div >> 7;
     uint32_t fractional_divisor;
 
@@ -61,8 +60,8 @@ constexpr baudrate_calculation baudrate_calculate(uint32_t requested_baudrate)
         fractional_divisor = ((baud_rate_div & 0x7f) + 1) / 2;
     }
 
-    uint32_t real_baudrate = (4 * board::clocks::peri_clk_hz /
-                              (64 * integer_divisor + fractional_divisor));
+    uint32_t real_baudrate =
+      (4 * board::clocks::peri_clk_hz / (64 * integer_divisor + fractional_divisor));
 
     return {baudrate_descriptor{.integer_divisor = integer_divisor,
                                 .fractional_divisor = fractional_divisor},
@@ -81,11 +80,10 @@ class uart
      *
      * @return the real configured baudrate
      */
-    static constexpr uint32_t init(
-      uint32_t requested_baudrate,
-      word_length data_bits = word_length::word_8_bits,
-      stop_bits stop_bits = stop_bits::one,
-      parity parity = parity::odd)
+    static constexpr uint32_t init(uint32_t requested_baudrate,
+                                   word_length data_bits = word_length::word_8_bits,
+                                   stop_bits stop_bits = stop_bits::one,
+                                   parity parity = parity::odd)
     {
         reset::reset_subsystem(descriptor::reset_bit);
         reset::release_subsystem_wait(descriptor::reset_bit);
@@ -115,14 +113,11 @@ class uart
         return real_baud;
     }
 
-    static constexpr void set_format(word_length data_bits,
-                                     stop_bits stop_bits,
-                                     parity parity)
+    static constexpr void set_format(word_length data_bits, stop_bits stop_bits, parity parity)
     {
-        descriptor::uartlcr_h::update_regions(
-          platform::uart::uartlcr_h_region_wlen{data_bits},
-          platform::uart::uartlcr_h_region_stop_bits{stop_bits},
-          platform::uart::uartlcr_h_region_parity{parity});
+        descriptor::uartlcr_h::update_regions(platform::uart::uartlcr_h_region_wlen{data_bits},
+                                              platform::uart::uartlcr_h_region_stop_bits{stop_bits},
+                                              platform::uart::uartlcr_h_region_parity{parity});
     }
 
     static constexpr bool is_readable()

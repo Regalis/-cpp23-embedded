@@ -69,16 +69,14 @@ int main()
     // Input value: 1000 (1ms)
     // Input range (duty cycle in us): [0, 20000] = [0ms, 20ms]
     // Output range [0, max_channel_value]
-    constexpr uint16_t servo_0 =
-      utils::map(1000, 0, 20000, 0, max_channel_value);
+    constexpr uint16_t servo_0 = utils::map(1000, 0, 20000, 0, max_channel_value);
 
     // Calculate channel value for angle = 180 (duty cycle 2500us = 2.5ms)
     // Linear interpolation:
     // Input value: 2500 (2.5ms)
     // Input range (duty cycle in us): [0, 20000] = [0ms, 20ms]
     // Output range [0, max_channel_value]
-    constexpr uint16_t servo_180 =
-      utils::map(2500, 0, 20000, 0, max_channel_value);
+    constexpr uint16_t servo_180 = utils::map(2500, 0, 20000, 0, max_channel_value);
 
     // NOTE! All the above calculations will be done at compile time!
 
@@ -91,8 +89,7 @@ int main()
         led0.toggle();
         timer::delay(1s);
         std::ranges::for_each(servo_positions, [&](auto angle) {
-            uint16_t channel_value =
-              utils::map(angle, 0, 180, servo_0, servo_180);
+            uint16_t channel_value = utils::map(angle, 0, 180, servo_0, servo_180);
             led0.toggle();
             pwm_slice.set_channel_levels(pwm_channel{channel_value});
             timer::delay(3s);

@@ -81,8 +81,7 @@ enum class font : uint8_t
 namespace instructions {
 
 namespace detail {
-constexpr uint8_t build_instruction(uint8_t instruction_code,
-                                    const auto&... arguments)
+constexpr uint8_t build_instruction(uint8_t instruction_code, const auto&... arguments)
 {
     return instruction_code | (std::to_underlying(arguments) | ...);
 }
@@ -101,15 +100,13 @@ constexpr auto entry_mode_set [[maybe_unused]] = [](mode mode, shift shift) {
     return detail::build_instruction(0x04, mode, shift);
 };
 
-constexpr auto display_on_off
-  [[maybe_unused]] = [](power power, cursor cursor, blink blink) {
-      return detail::build_instruction(0x08, power, cursor, blink);
-  };
+constexpr auto display_on_off [[maybe_unused]] = [](power power, cursor cursor, blink blink) {
+    return detail::build_instruction(0x08, power, cursor, blink);
+};
 
-constexpr auto function_set
-  [[maybe_unused]] = [](interface interface, lines lines, font font) {
-      return detail::build_instruction(0x20, interface, lines, font);
-  };
+constexpr auto function_set [[maybe_unused]] = [](interface interface, lines lines, font font) {
+    return detail::build_instruction(0x20, interface, lines, font);
+};
 
 constexpr auto ddram_set [[maybe_unused]] = [](uint8_t address) {
     return bitwise_or(0x80, bitwise_and(address, 0x7F));

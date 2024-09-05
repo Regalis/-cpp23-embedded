@@ -60,9 +60,8 @@ template<typename T>
 concept region_numeric = hwio_region<T> && std::integral<typename T::value_t>;
 
 template<typename T>
-concept region_strong = hwio_region<T> && requires {
-    requires std::is_scoped_enum_v<typename T::value_t>;
-};
+concept region_strong =
+  hwio_region<T> && requires { requires std::is_scoped_enum_v<typename T::value_t>; };
 
 constexpr auto region_value(const region_numeric auto& region)
 {
@@ -120,9 +119,8 @@ class reg
         requires is_one_of_valid_regions<R, Region...>
     constexpr static auto region_value_at_its_position(const R& region)
     {
-        return (
-          (static_cast<reg_value_t>(region_value(region)) << R::first_bit) &
-          region_mask(region));
+        return ((static_cast<reg_value_t>(region_value(region)) << R::first_bit) &
+                region_mask(region));
     }
 
     constexpr static auto all_regions_mask()
@@ -137,12 +135,7 @@ template<typename RegPtrType,
          RegPtrType Offset = 0,
          typename BitsType = unsigned int,
          hwio_region... Region>
-using volatile_reg = reg<volatile RegPtrType,
-                         RegValueType,
-                         BaseAddr,
-                         Offset,
-                         BitsType,
-                         Region...>;
+using volatile_reg = reg<volatile RegPtrType, RegValueType, BaseAddr, Offset, BitsType, Region...>;
 
 // clang-format off
 template<typename T>
@@ -172,8 +165,7 @@ class ro : public T
         return bitwise_and(T::cref(), bit_value(bit_no));
     }
 
-    constexpr static typename T::reg_value_t get_bits_with_mask(
-      typename T::reg_value_t mask)
+    constexpr static typename T::reg_value_t get_bits_with_mask(typename T::reg_value_t mask)
     {
         return bitwise_and(T::cref(), mask);
     }
@@ -209,8 +201,7 @@ class wo : public T
         return *this;
     }
 
-    constexpr static T::reg_value_t regions_to_register_value(
-      const auto... region)
+    constexpr static T::reg_value_t regions_to_register_value(const auto... region)
     {
         return (T::region_value_at_its_position(region) | ...);
     }

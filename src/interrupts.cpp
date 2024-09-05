@@ -125,5 +125,4 @@ struct __attribute__((packed)) vector_table
     interrupt_handler_t isr_irq31 = irq_t(default_isr);
 };
 
-const volatile __attribute__((section("__vector_table")))
-vector_table default_vtable{};
+const volatile __attribute__((section("__vector_table"))) vector_table default_vtable{};

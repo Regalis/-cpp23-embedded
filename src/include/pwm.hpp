@@ -72,12 +72,10 @@ constexpr frequency_config get_frequency_config_for(uint32_t target_frequency)
         target_div = (16 * static_cast<uint64_t>(board::clocks::sys_clk_hz) +
                       ((top_max * target_frequency) - 1)) /
                      (top_max * target_frequency);
-        target_wrap =
-          ((16 * static_cast<uint64_t>(board::clocks::sys_clk_hz) +
-            ((target_div * static_cast<uint64_t>(board::clocks::sys_clk_hz)) /
-             2)) /
-           (target_div * static_cast<uint64_t>(board::clocks::sys_clk_hz))) -
-          1;
+        target_wrap = ((16 * static_cast<uint64_t>(board::clocks::sys_clk_hz) +
+                        ((target_div * static_cast<uint64_t>(board::clocks::sys_clk_hz)) / 2)) /
+                       (target_div * static_cast<uint64_t>(board::clocks::sys_clk_hz))) -
+                      1;
     }
 
     return {.wrap = static_cast<uint16_t>(target_wrap),
@@ -88,8 +86,7 @@ constexpr frequency_config get_frequency_config_for(uint32_t target_frequency)
 constexpr uint32_t get_frequency_from_config(frequency_config config)
 {
     return (board::clocks::sys_clk_hz /
-            ((config.wrap + 1UL) *
-             (config.integer_divisor + (config.fractional_divisor / 16UL))));
+            ((config.wrap + 1UL) * (config.integer_divisor + (config.fractional_divisor / 16UL))));
 }
 
 namespace detail {
@@ -107,8 +104,7 @@ struct pwm_slice
 
     static constexpr frequency_config set_frequency(uint32_t target_frequency)
     {
-        const auto frequency_config =
-          get_frequency_config_for(target_frequency);
+        const auto frequency_config = get_frequency_config_for(target_frequency);
         set_frequency(frequency_config);
         return frequency_config;
     }
@@ -141,16 +137,13 @@ struct pwm_slice
 
     static constexpr void set_clkdiv_mode(clkdiv_mode mode)
     {
-        descriptor::csr::update_regions(
-          platform::pwm::csr_region_divmode{mode});
+        descriptor::csr::update_regions(platform::pwm::csr_region_divmode{mode});
     }
 
-    static constexpr void set_clkdiv(uint16_t integer_divisor,
-                                     uint16_t fractional_divisor = 0)
+    static constexpr void set_clkdiv(uint16_t integer_divisor, uint16_t fractional_divisor = 0)
     {
-        descriptor::div::update_regions(
-          platform::pwm::div_region_int{integer_divisor},
-          platform::pwm::div_region_frac{fractional_divisor});
+        descriptor::div::update_regions(platform::pwm::div_region_int{integer_divisor},
+                                        platform::pwm::div_region_frac{fractional_divisor});
     }
 };
 
@@ -180,9 +173,8 @@ consteval auto get_cc_register_region()
 template<platform::pins Pin>
 struct channel_for_pin
 {
-    constexpr static slice_channel channel_no = (std::to_underlying(Pin) & 1)
-                                                  ? slice_channel::channel_b
-                                                  : slice_channel::channel_a;
+    constexpr static slice_channel channel_no =
+      (std::to_underlying(Pin) & 1) ? slice_channel::channel_b : slice_channel::channel_a;
     using type = std::decay_t<decltype(get_cc_register_region<channel_no>())>;
 };
 
@@ -226,12 +218,10 @@ consteval auto from_gpio(T)
 }
 }
 
-constexpr uint32_t frequency_maximum [[maybe_unused]] =
-  board::clocks::sys_clk_hz;
+constexpr uint32_t frequency_maximum [[maybe_unused]] = board::clocks::sys_clk_hz;
 
 constexpr uint32_t frequency_minimum [[maybe_unused]] =
-  get_frequency_from_config(
-    {.wrap = 0xffff, .integer_divisor = 0xff, .fractional_divisor = 0xf});
+  get_frequency_from_config({.wrap = 0xffff, .integer_divisor = 0xff, .fractional_divisor = 0xf});
 
 }
 
