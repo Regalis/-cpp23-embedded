@@ -50,16 +50,16 @@ int main()
 
     // Prepere descriptor for the selected interface
     constexpr auto descriptor =
-      hd44780::interfaces::gpio4_bit{.register_select = platform::pins::gpio16,
-                                     .enable = platform::pins::gpio17,
-                                     .data4 = platform::pins::gpio18,
-                                     .data5 = platform::pins::gpio19,
-                                     .data6 = platform::pins::gpio20,
-                                     .data7 = platform::pins::gpio21};
+      hd44780::interfaces::gpio4_bit{.register_select = platform::pins::gpio10,
+                                     .enable = platform::pins::gpio11,
+                                     .data4 = platform::pins::gpio12,
+                                     .data5 = platform::pins::gpio13,
+                                     .data6 = platform::pins::gpio14,
+                                     .data7 = platform::pins::gpio15};
 
     // Define your LCD hardware layout
     constexpr auto configuration =
-      hd44780::configuration{.columns = 16, .lines = 2, .font_size = hd44780::font::font_5x8};
+      hd44780::configuration{.columns = 20, .lines = 4, .font_size = hd44780::font::font_5x8};
 
     // Get type of the driver based on your descriptor and configuration
     using lcd = hd44780::hd44780<hd44780::interface_for<descriptor>, configuration>;
