@@ -288,6 +288,7 @@ Happy hacking!
 # License
 
 C++23 embedded framework - experiments
+
 Copyright (C) 2023-2024 Patryk (Regalis) Jaworski <regalis@regalis.tech>
 
 This program is free software: you can redistribute it and/or modify
