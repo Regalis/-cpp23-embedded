@@ -64,7 +64,8 @@ int main()
     // Get the type of the driver based on your descriptor and configuration
     using lcd_t = hd44780::hd44780<hd44780::interface_for<descriptor>, configuration>;
 
-    lcd_t lcd{};
+    // Main LCD
+    constexpr lcd_t lcd{};
 
     timer::delay(500ms);
 

@@ -23,5 +23,6 @@
 #define HD44780_FEATURES_ALL
 
 #include "features/animations.hpp"
+#include "features/backlight_control_pwm.hpp"
 
 #endif

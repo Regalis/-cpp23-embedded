@@ -37,7 +37,7 @@ template<uint32_t CharactersDelayMilliseconds>
 struct with_animations
 {
     template<typename Self>
-    constexpr uint32_t soft_puts(this Self&& self, std::string_view str)
+    constexpr uint32_t animate_puts(this Self&& self, std::string_view str)
     {
         std::ranges::for_each(str, [self](const char character) {
             auto _ = timer::scoped_delay{std::chrono::milliseconds{CharactersDelayMilliseconds}};
@@ -57,7 +57,7 @@ struct with_animations
      * expected position.
      */
     template<typename Self>
-    constexpr uint32_t soft_clear(this Self&& self, uint32_t number_of_characters)
+    constexpr uint32_t animate_clear(this Self&& self, uint32_t number_of_characters)
     {
         using Interface = typename std::decay_t<Self>::interface;
 
@@ -84,8 +84,8 @@ using with_animations_custom_delay = detail::with_animations<CharactersDelayMill
 
 template<typename T>
 concept has_animations = requires(T lcd) {
-    { lcd.soft_puts("Hello world") };
-    { lcd.soft_clear(10) };
+    { lcd.animate_puts("Hello world") };
+    { lcd.animate_clear(10) };
 };
 
 }

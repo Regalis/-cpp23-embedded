@@ -51,6 +51,7 @@ class hd44780 : public Features...
     {
         using namespace std::chrono_literals;
         using namespace instructions;
+
         interface::init_mcu_interface();
         init_features();
         interface::init_lcd_interface();

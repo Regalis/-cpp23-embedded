@@ -21,7 +21,6 @@
 
 #include "clocks.hpp"
 #include "drivers/lcd/hd44780/features.hpp"
-#include "drivers/lcd/hd44780/features/animations.hpp"
 #include "drivers/lcd/hd44780/hd44780.hpp"
 #include "drivers/lcd/hd44780/interfaces/gpio4_bit.hpp"
 #include "gpio.hpp"
@@ -47,6 +46,9 @@ int main()
     // We need to release io_bank0 from the reset state to be able to use GPIOs
     reset::release_subsystem_wait(reset::subsystems::io_bank0);
 
+    // For PWM (LCD backlight control)
+    reset::release_subsystem_wait(reset::subsystems::pwm);
+
     gpio::pin<platform::pins::gpio25> led0;
     led0.function_select(gpio::functions::sio);
     led0.set_as_output();
@@ -65,9 +67,12 @@ int main()
       hd44780::configuration{.columns = 20, .lines = 4, .font_size = hd44780::font::font_5x8};
 
     // Get the type of the driver based on your descriptor and configuration
-    using lcd_t =
-      hd44780::hd44780<hd44780::interface_for<descriptor>, configuration, with_animations>;
+    using lcd_t = hd44780::hd44780<hd44780::interface_for<descriptor>,
+                                   configuration,
+                                   with_animations,
+                                   with_backlight_control_pwm<platform::pins::gpio18>>;
 
+    // Main
     constexpr lcd_t lcd{};
 
     timer::delay(500ms);
@@ -75,14 +80,25 @@ int main()
     // Initialize both the MCU interface (in this case - the GPIOs) and the LCD itself
     lcd.init();
 
-    lcd.soft_puts("Hello world");
+    lcd.animate_puts("Hello world");
+
     lcd.cursor_goto(0, 1);
-    auto length = lcd.soft_puts("blog.regalis.tech");
+    auto length = lcd.animate_puts("blog.regalis.tech");
     timer::delay(1s);
-    lcd.soft_clear(length);
+    lcd.animate_clear(length);
     timer::delay(1s);
     lcd.cursor_goto(0, 1);
-    lcd.soft_puts("Happy hacking :)");
+
+    lcd.animate_puts("Happy hacking :)");
+    timer::delay(1s);
+
+    // smoothly change brightness to 5%
+    lcd.backlight_fade_into(5);
+
+    timer::delay(1s);
+
+    // smoothly change brightness to 100%
+    lcd.backlight_fade_into(100);
 
     while (true) {
         led0.toggle();
