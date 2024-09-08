@@ -125,6 +125,11 @@ struct pwm_slice
         descriptor::cc::update_regions(channel...);
     }
 
+    static constexpr auto get_channel_level(const auto channel)
+    {
+        return descriptor::cc::region_read(channel).value;
+    }
+
     static constexpr void enable()
     {
         descriptor::csr::set_bits(platform::pwm::csr_bits::en);

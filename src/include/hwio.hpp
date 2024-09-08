@@ -115,6 +115,7 @@ class reg
         return (all_bits >> (reg_bits - region.length)) << region.first_bit;
     }
 
+    // TODO: Who named it?! 🐒 Yup, that was me...
     template<typename R>
         requires is_one_of_valid_regions<R, Region...>
     constexpr static auto region_value_at_its_position(const R& region)
@@ -126,6 +127,13 @@ class reg
     constexpr static auto all_regions_mask()
     {
         return bitwise_or(region_mask(Region{})...);
+    }
+
+    template<typename R>
+        requires is_one_of_valid_regions<R, Region...>
+    constexpr static auto region_read(const R& region) -> R
+    {
+        return R{bitwise_and(cref(), region_mask(region)) >> R::first_bit};
     }
 };
 
