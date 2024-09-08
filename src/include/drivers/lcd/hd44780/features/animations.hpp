@@ -32,7 +32,8 @@
 
 namespace drivers::lcd::hd44780::features {
 
-template<uint32_t CharactersDelayMilliseconds = 50>
+namespace detail {
+template<uint32_t CharactersDelayMilliseconds>
 struct with_animations
 {
     template<typename Self>
@@ -47,7 +48,7 @@ struct with_animations
     }
 
     /**
-     * Clean specified number of characters with a nice looking delay.
+     * Clean specified number of characters with a nice looking animation.
      *
      * WARNING! This function with leave the cursor **behind the last removed character**, use
      * `cursor_goto()` to set the cursor into the desired position.
@@ -74,6 +75,12 @@ struct with_animations
         return number_of_characters;
     }
 };
+}
+
+using with_animations = detail::with_animations<50>;
+
+template<uint32_t CharactersDelayMilliseconds>
+using with_animations_custom_delay = detail::with_animations<CharactersDelayMilliseconds>;
 
 template<typename T>
 concept has_animations = requires(T lcd) {

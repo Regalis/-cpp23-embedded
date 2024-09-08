@@ -66,7 +66,7 @@ int main()
 
     // Get the type of the driver based on your descriptor and configuration
     using lcd_t =
-      hd44780::hd44780<hd44780::interface_for<descriptor>, configuration, with_animations<>>;
+      hd44780::hd44780<hd44780::interface_for<descriptor>, configuration, with_animations>;
 
     constexpr lcd_t lcd{};
 
