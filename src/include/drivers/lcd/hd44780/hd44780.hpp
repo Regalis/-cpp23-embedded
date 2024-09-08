@@ -24,13 +24,10 @@
 
 #include <algorithm>
 #include <chrono>
+#include <expected>
 #include <ranges>
 #include <type_traits>
 #include <utility>
-
-#include "gpio.hpp"
-#include "rp2040.hpp"
-#include "timer.hpp"
 
 #include "instructions.hpp"
 
@@ -43,23 +40,19 @@ struct configuration
     font font_size = font::font_5x8;
 };
 
-template<typename Interface, configuration Config>
-class hd44780
+template<typename Interface, configuration Config, class... Features>
+class hd44780 : public Features...
 {
   public:
     using interface = Interface;
     static constexpr configuration config = Config;
-    static_assert(config.lines != 1 || config.lines != 2 || config.lines != 4,
-                  "Invalid value for configuration::lines (select one of 1, 2 or 4");
-    static_assert(config.columns <= 40,
-                  "Invalid value for configuration::columns. Maximum "
-                  "supported value is 40");
 
-    static constexpr void init()
+    constexpr void init() const
     {
         using namespace std::chrono_literals;
         using namespace instructions;
         interface::init_mcu_interface();
+        init_features();
         interface::init_lcd_interface();
 
         constexpr lines number_of_lines = (Config.lines > 1 ? lines::two_lines : lines::one_line);
@@ -88,18 +81,18 @@ class hd44780
     /**
      * Clear display and return home (x = 0, y = 0)
      */
-    static constexpr void clear()
+    constexpr void clear() const
     {
         interface::send_instruction(instructions::clear_display());
         home();
     }
 
-    static constexpr void home()
+    constexpr void home() const
     {
         interface::send_instruction(instructions::return_home());
     }
 
-    static constexpr void cursor_goto(uint8_t x, uint8_t y)
+    constexpr void cursor_goto(uint8_t x, uint8_t y) const
     {
         uint8_t addr = x & 0x3f;
         if (y == 1 || y == 3) {
@@ -111,43 +104,55 @@ class hd44780
         interface::send_instruction(instructions::ddram_set(addr));
     }
 
-    static constexpr void display_on(cursor cursor = cursor::off, blink blink = blink::off)
+    constexpr void display_on(cursor cursor = cursor::off, blink blink = blink::off) const
     {
         interface::send_instruction(instructions::display_on_off(power::on, cursor, blink));
     }
 
-    static constexpr void display_off()
+    constexpr void display_off() const
     {
         interface::send_instruction(power::off, cursor::off, blink::off);
     }
 
-    static constexpr void clear_line(uint8_t line)
+    constexpr void clear_line(uint8_t line) const
     {
         cursor_goto(0, line);
         constexpr uint8_t start = 0;
         constexpr uint8_t stop = config.columns;
-        std::ranges::for_each(std::views::iota(start, stop), [](auto) {
+        std::ranges::for_each(std::views::iota(start, stop), [this](auto) {
             putc(' ');
         });
         cursor_goto(0, line);
     }
 
-    static constexpr void putc(char character)
+    constexpr void putc(char character) const
     {
         interface::send_data(static_cast<uint8_t>(character));
     }
 
-    static constexpr void puts(std::string_view str)
+    constexpr uint32_t puts(std::string_view str) const
     {
-        std::ranges::for_each(str, putc);
+        for (auto character : str) {
+            putc(character);
+        }
+        return str.length();
     }
 
-    static constexpr void soft_puts(std::string_view str)
+  protected:
+    constexpr void init_features(this auto&& self)
     {
-        std::ranges::for_each(str, [](const char character) {
-            putc(character);
-            interface::delay(std::chrono::milliseconds(50));
-        });
+        using enabled_features = std::tuple<Features...>;
+
+        auto initialize_feature = [self]<std::size_t I>(std::integral_constant<std::size_t, I>) {
+            using feature_t = std::tuple_element_t<I, enabled_features>;
+            if constexpr (requires(feature_t f) { f.init(); }) {
+                self.feature_t::init();
+            }
+        };
+
+        [=]<std::size_t... I>(std::index_sequence<I...>) {
+            ((initialize_feature(std::integral_constant<std::size_t, I>()), ...));
+        }(std::make_index_sequence<std::tuple_size_v<enabled_features>>());
     }
 };
 
@@ -166,7 +171,6 @@ struct interface_for
 
 template<auto T>
 using interface_for = detail::interface_for<T>::type;
-
 }
 
 #endif

@@ -61,18 +61,19 @@ int main()
     constexpr auto configuration =
       hd44780::configuration{.columns = 20, .lines = 4, .font_size = hd44780::font::font_5x8};
 
-    // Get type of the driver based on your descriptor and configuration
-    using lcd = hd44780::hd44780<hd44780::interface_for<descriptor>, configuration>;
+    // Get the type of the driver based on your descriptor and configuration
+    using lcd_t = hd44780::hd44780<hd44780::interface_for<descriptor>, configuration>;
+
+    lcd_t lcd{};
 
     timer::delay(500ms);
 
-    // Initialize both MCU interface (in this case - the GPIOs) and the LCD
-    // itself
-    lcd::init();
+    // Initialize both the MCU interface (in this case - the GPIOs) and the LCD itself
+    lcd.init();
 
-    lcd::soft_puts("Hello world");
-    lcd::cursor_goto(0, 1);
-    lcd::soft_puts("blog.regalis.tech");
+    lcd.puts("Hello world");
+    lcd.cursor_goto(0, 1);
+    lcd.puts("blog.regalis.tech");
 
     while (true) {
         led0.toggle();

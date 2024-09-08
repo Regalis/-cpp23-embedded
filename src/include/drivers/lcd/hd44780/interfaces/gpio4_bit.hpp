@@ -26,6 +26,7 @@
 
 #include "gpio.hpp"
 #include "rp2040.hpp"
+#include "timer.hpp"
 
 #include "../instructions.hpp"
 
@@ -107,7 +108,7 @@ class gpio_4bit
         send_nibble(true, instruction & 0x0f);
     }
 
-    static constexpr void send_data(uint8_t data)
+    static constexpr auto send_data(uint8_t data)
     {
         send_nibble(false, data >> 4);
         send_nibble(false, data & 0x0f);
