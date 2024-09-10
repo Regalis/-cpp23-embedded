@@ -22,7 +22,6 @@
 #include "clocks.hpp"
 #include "drivers/lcd/hd44780/hd44780.hpp"
 #include "drivers/lcd/hd44780/interfaces/gpio4_bit.hpp"
-#include "gpio.hpp"
 #include "reset.hpp"
 #include "rp2040.hpp"
 #include "timer.hpp"

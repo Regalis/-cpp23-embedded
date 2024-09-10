@@ -91,7 +91,8 @@ struct with_backlight_control_pwm
   protected:
     constexpr static uint16_t percent_to_pwm_channel_level(uint32_t percent)
     {
-        return static_cast<uint16_t>(utils::map(static_cast<long int>(percent), 0, 100, pwm_min_channel_value, pwm_max_channel_value));
+        return static_cast<uint16_t>(utils::map(
+          static_cast<long int>(percent), 0, 100, pwm_min_channel_value, pwm_max_channel_value));
     }
 
     constexpr static uint32_t pwm_channel_level_to_percent(uint32_t channel_level)

@@ -75,33 +75,48 @@ int main()
     // Main
     constexpr lcd_t lcd{};
 
-    timer::delay(500ms);
-
     // Initialize both the MCU interface (in this case - the GPIOs) and the LCD itself
     lcd.init();
 
-    lcd.animate_puts("Hello world");
-
-    lcd.cursor_goto(0, 1);
-    auto length = lcd.animate_puts("blog.regalis.tech");
-    timer::delay(1s);
-    lcd.animate_clear(length);
-    timer::delay(1s);
-    lcd.cursor_goto(0, 1);
-
-    lcd.animate_puts("Happy hacking :)");
-    timer::delay(1s);
-
-    // smoothly change brightness to 5%
-    lcd.backlight_fade_into(5);
-
-    timer::delay(1s);
-
-    // smoothly change brightness to 100%
-    lcd.backlight_fade_into(100);
+    timer::delay(500ms);
 
     while (true) {
         led0.toggle();
-        timer::delay(250ms);
+
+        // clear the display
+        lcd.clear();
+
+        timer::delay(500ms);
+
+        // smooth print
+        lcd.animate_puts("Hello world");
+
+        // go to the second line
+        lcd.cursor_goto(0, 1);
+        // smooth print, save number of printed characters
+        auto length = lcd.animate_puts("blog.regalis.tech");
+
+        timer::delay(1s);
+
+        // smooth clear, use the previously saved length
+        lcd.animate_clear(length);
+
+        timer::delay(1s);
+
+        // back to the second line
+        lcd.cursor_goto(0, 1);
+        length = lcd.animate_puts("Happy hacking :)");
+
+        timer::delay(1s);
+
+        // smoothly change the brightness to 5%
+        lcd.backlight_fade_into(5);
+
+        timer::delay(1s);
+
+        // smoothly change the brightness to 100%
+        lcd.backlight_fade_into(100);
+
+        timer::delay(1s);
     }
 }
