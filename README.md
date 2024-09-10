@@ -231,6 +231,28 @@ std::print(second_lcd, "Hello world again...");
 
 ```
 
+### Extensible drivers via `features`
+
+Speaking of alphanumeric LCDs, due to numerous possibilities as it comes to LCD
+modules, I thought it would be a good idea to make drivers **extensible**.
+
+Take a look at the following example:
+
+```c++
+using main_lcd = hd44780::hd44780<hd44780::interface_for<descriptor>,
+                                  lcd_configuration,
+                                  with_animations,
+                                  with_contrast_control_via_pwm<platform::pins::gpio17>,
+                                  with_backlight_control_via_pwm<platform::pins::gpio18>>;
+```
+
+You can extend the driver by enabling selected `features`, this way we can have a LCD
+driver `with_animations` and `with_backlight_control_via_pwm` (on pin `18`) and so on.
+
+Take a look at
+[examples/](https://gitlab.com/Regalis/cpp23-embedded/-/tree/master/examples/lcd/hd44780/)
+for a list of **working examples**.
+
 ## Convenient input/output
 
 The library must provide a seamless integration with the great `std::print`
