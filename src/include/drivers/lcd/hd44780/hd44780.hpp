@@ -90,7 +90,9 @@ class hd44780 : public Features...
 
     constexpr void home() const
     {
+        using namespace std::chrono_literals;
         interface::send_instruction(instructions::return_home());
+        interface::delay(2ms);
     }
 
     constexpr void cursor_goto(uint8_t x, uint8_t y) const

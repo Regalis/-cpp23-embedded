@@ -22,7 +22,9 @@
 #ifndef HD44780_INSTRUCTIONS_HPP
 #define HD44780_INSTRUCTIONS_HPP
 
-#include "rp2040.hpp"
+#include <utility>
+
+#include "bitops.hpp"
 
 namespace drivers::lcd::hd44780 {
 
@@ -51,7 +53,6 @@ enum class mode : uint8_t
     decrement = 0,
     increment = 0x02
 };
-#include <utility>
 
 enum class shift : uint8_t
 {
