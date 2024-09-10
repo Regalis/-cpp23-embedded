@@ -42,7 +42,7 @@ constexpr static auto default_frequency_config [[maybe_unused]] =
 template<platform::pins GPIO_PIN,
          uint8_t InitialBrightnessPercent = 100,
          pwm::frequency_config PWMFrequencyConfig = default_frequency_config>
-struct with_backlight_control_pwm
+struct with_backlight_control_via_pwm
 {
     constexpr static auto gpio_pin = gpio::pin<GPIO_PIN>{};
     constexpr static auto pwm_slice = pwm::from_gpio(gpio_pin);

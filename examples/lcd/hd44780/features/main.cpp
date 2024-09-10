@@ -70,7 +70,7 @@ int main()
     using lcd_t = hd44780::hd44780<hd44780::interface_for<descriptor>,
                                    configuration,
                                    with_animations,
-                                   with_backlight_control_pwm<platform::pins::gpio18>>;
+                                   with_backlight_control_via_pwm<platform::pins::gpio18>>;
 
     // Main
     constexpr lcd_t lcd{};
