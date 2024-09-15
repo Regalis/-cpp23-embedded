@@ -70,6 +70,8 @@ add_project_arguments(
     '-Wlifetime',
     '-fconcepts-diagnostics-depth=2',
     '-Werror=return-type',
+    '-Werror=conversion',
+    '-Werror=narrowing',
   ]),
   language: ['cpp'],
 )

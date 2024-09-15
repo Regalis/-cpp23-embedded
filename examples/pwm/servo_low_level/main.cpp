@@ -89,7 +89,8 @@ int main()
         led0.toggle();
         timer::delay(1s);
         std::ranges::for_each(servo_positions, [&](auto angle) {
-            uint16_t channel_value = utils::map(angle, 0, 180, servo_0, servo_180);
+            auto channel_value =
+              static_cast<uint16_t>(utils::map(angle, 0, 180, servo_0, servo_180));
             led0.toggle();
             pwm_slice.set_channel_levels(pwm_channel{channel_value});
             timer::delay(3s);

@@ -133,7 +133,8 @@ class reg
         requires is_one_of_valid_regions<R, Region...>
     constexpr static auto region_read(const R& region) -> R
     {
-        return R{bitwise_and(cref(), region_mask(region)) >> R::first_bit};
+        return R{static_cast<typename R::value_t>(bitwise_and(cref(), region_mask(region)) >>
+                                                  R::first_bit)};
     }
 };
 

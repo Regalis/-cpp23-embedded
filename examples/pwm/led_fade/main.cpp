@@ -57,17 +57,17 @@ int main()
     // Enable signal generation
     pwm_slice.enable();
 
-    constexpr unsigned short duty_max = 101;
+    // Wrap value + 1
+    constexpr unsigned short int duty_max = 101;
 
     while (true) {
-        pwm_slice.set_channel_levels(pwm_channel_t{0});
-        led0.function_select(gpio::functions::pwm);
         for (unsigned short i = 0; i <= duty_max; ++i) {
             pwm_slice.set_channel_levels(pwm_channel_t{i});
             timer::delay(20ms);
         }
         for (unsigned short i = 0; i <= duty_max; ++i) {
-            pwm_slice.set_channel_levels(pwm_channel_t{duty_max - i});
+            auto target_channel_value = static_cast<unsigned short>(duty_max - 1);
+            pwm_slice.set_channel_levels(pwm_channel_t{target_channel_value});
             timer::delay(20ms);
         }
         timer::delay(1s);

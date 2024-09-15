@@ -110,11 +110,11 @@ constexpr auto function_set [[maybe_unused]] = [](interface interface, lines lin
 };
 
 constexpr auto ddram_set [[maybe_unused]] = [](uint8_t address) {
-    return bitwise_or(0x80, bitwise_and(address, 0x7F));
+    return static_cast<uint8_t>(bitwise_or(0x80, bitwise_and(address, 0x7F)));
 };
 
 constexpr auto cgram_set [[maybe_unused]] = [](uint8_t address) {
-    return bitwise_or(0x40, bitwise_and(address, 0x3F));
+    return static_cast<uint8_t>(bitwise_or(0x40, bitwise_and(address, 0x3F)));
 };
 
 }

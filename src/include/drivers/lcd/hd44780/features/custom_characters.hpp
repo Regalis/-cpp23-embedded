@@ -49,20 +49,20 @@ class lcd_custom_char
 
         for (const auto& [index, line] : font | std::views::enumerate) {
             std::bitset<16> bits;
-            for (int i = 0; i < Width; ++i) {
+            for (unsigned short i = 0; i < Width; ++i) {
                 if (line[i] == ' ') {
                     continue;
                 }
                 bits.set(Width - i - 1);
             }
-            m_data[index] = bits.to_ulong();
+            m_data[index] = static_cast<uint8_t>(bits.to_ulong());
         }
     }
 
     constexpr bool operator==(const lcd_custom_char<Width, Height>&) const = default;
 
   public:
-    std::array<uint16_t, Height> m_data;
+    std::array<uint8_t, Height> m_data;
 };
 
 }

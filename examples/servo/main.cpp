@@ -62,7 +62,7 @@ int main()
     // Enable signal generation
     my_servo.enable();
 
-    constexpr std::array servo_positions{0, 45, 90, 135, 180};
+    constexpr std::array servo_positions{0u, 45u, 90u, 135u, 180u};
 
     while (true) {
         led0.toggle();
