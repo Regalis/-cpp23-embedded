@@ -24,5 +24,6 @@
 
 #include "features/animations.hpp"
 #include "features/backlight_control_pwm.hpp"
+#include "features/custom_characters.hpp"
 
 #endif
