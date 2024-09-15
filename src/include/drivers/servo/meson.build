@@ -17,12 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-examples = []
-examples_bin = []
-examples_uf2 = []
-
-subdir('blink/')
-subdir('uart/')
-subdir('pwm/')
-subdir('lcd/')
-subdir('servo/')
+headers += files(
+  'servo.hpp',
+  'interface_helpers.hpp',
+  'interfaces/pwm.hpp',
+)
