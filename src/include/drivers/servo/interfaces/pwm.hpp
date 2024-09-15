@@ -75,8 +75,11 @@ class pwm
     // TODO: use strong types for the angle!
     static constexpr void set_angle(uint32_t angle)
     {
-        const auto target_channel_value =
-          utils::map(angle, 0, 180, servo_channel_value_for_0_deg, servo_channel_value_for_180_deg);
+        const auto target_channel_value = utils::map(static_cast<long int>(angle),
+                                                     0,
+                                                     180,
+                                                     servo_channel_value_for_0_deg,
+                                                     servo_channel_value_for_180_deg);
         pwm_slice.set_channel_levels(pwm_channel{static_cast<uint16_t>(target_channel_value)});
     }
 

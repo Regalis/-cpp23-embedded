@@ -55,7 +55,8 @@ class lcd_custom_char
                 }
                 bits.set(Width - i - 1);
             }
-            m_data[index] = static_cast<uint8_t>(bits.to_ulong());
+            using m_data_size_t = decltype(m_data)::size_type;
+            m_data[static_cast<m_data_size_t>(index)] = static_cast<uint8_t>(bits.to_ulong());
         }
     }
 

@@ -79,7 +79,10 @@ struct with_backlight_control_via_pwm
     {
         const uint32_t current_brigtness =
           pwm_channel_level_to_percent(self.pwm_slice.get_channel_level(pwm_channel{}));
+        // TODO: step should be configurable
         int32_t step = (current_brigtness > target_brightness_percent ? -1 : 1);
+
+        // TODO: fix sign-conversion warning
         for (uint32_t brightness = current_brigtness; brightness != target_brightness_percent;
              brightness += step) {
             // TODO: animation speed should be configurable!
@@ -97,7 +100,11 @@ struct with_backlight_control_via_pwm
 
     constexpr static uint32_t pwm_channel_level_to_percent(uint32_t channel_level)
     {
-        return utils::map(channel_level, pwm_min_channel_value, pwm_max_channel_value, 0, 100);
+        return static_cast<uint32_t>(utils::map(static_cast<long int>(channel_level),
+                                                pwm_min_channel_value,
+                                                pwm_max_channel_value,
+                                                0,
+                                                100));
     }
 };
 
