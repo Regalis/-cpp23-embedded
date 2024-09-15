@@ -18,3 +18,4 @@
 #
 
 subdir('lcd/')
+subdir('servo/')
