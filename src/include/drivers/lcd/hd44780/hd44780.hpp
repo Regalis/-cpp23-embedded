@@ -53,7 +53,6 @@ class hd44780 : public Features...
         using namespace instructions;
 
         interface::init_mcu_interface();
-        init_features();
         interface::init_lcd_interface();
 
         constexpr lines number_of_lines = (Config.lines > 1 ? lines::two_lines : lines::one_line);
@@ -77,6 +76,8 @@ class hd44780 : public Features...
         interface::send_instruction(
           instructions::display_on_off(power::on, cursor::off, blink::off));
         interface::delay(1ms);
+
+        init_features();
     }
 
     /**

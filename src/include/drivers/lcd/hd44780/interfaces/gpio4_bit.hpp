@@ -110,8 +110,13 @@ class gpio_4bit
 
     static constexpr auto send_data(uint8_t data)
     {
+        using namespace std::chrono_literals;
+
         send_nibble(false, data >> 4);
         send_nibble(false, data & 0x0f);
+
+        // wait for at least 37us
+        delay(40us);
     }
 
     static constexpr void enable()
