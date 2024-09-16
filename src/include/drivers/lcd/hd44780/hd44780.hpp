@@ -25,20 +25,14 @@
 #include <algorithm>
 #include <chrono>
 #include <expected>
+#include <optional>
 #include <ranges>
 #include <type_traits>
 #include <utility>
 
-#include "instructions.hpp"
+#include "common.hpp"
 
 namespace drivers::lcd::hd44780 {
-
-struct configuration
-{
-    uint8_t columns = 16;
-    uint8_t lines = 2;
-    font font_size = font::font_5x8;
-};
 
 template<typename Interface, configuration Config, class... Features>
 class hd44780 : public Features...
@@ -108,6 +102,11 @@ class hd44780 : public Features...
         interface::send_instruction(instructions::ddram_set(addr));
     }
 
+    constexpr void cursor_goto(uint8_t x, line line_no) const
+    {
+        cursor_goto(x, std::to_underlying(line_no));
+    }
+
     constexpr void display_on(cursor cursor = cursor::off, blink blink = blink::off) const
     {
         interface::send_instruction(instructions::display_on_off(power::on, cursor, blink));
@@ -129,6 +128,11 @@ class hd44780 : public Features...
         cursor_goto(0, line);
     }
 
+    constexpr void clear_line(line line_no) const
+    {
+        clear_line(std::to_underlying(line_no));
+    }
+
     constexpr void putc(char character) const
     {
         interface::send_data(static_cast<uint8_t>(character));
@@ -140,6 +144,49 @@ class hd44780 : public Features...
             putc(character);
         }
         return str.length();
+    }
+
+    constexpr uint32_t puts(std::string_view str,
+                            line line_no,
+                            alignment align = alignment::no_alignment)
+    {
+        prepare_cursor_position(str, line_no, align);
+        return puts(str);
+    }
+
+    constexpr std::optional<std::tuple<uint8_t, uint8_t>>
+      prepare_cursor_position(std::string_view str, line line_no, alignment align) const
+    {
+        std::tuple<uint8_t, uint8_t> result{0, std::to_underlying(line_no)};
+        auto& [x, y] = result;
+        switch (align) {
+            case alignment::no_alignment:
+                return std::nullopt;
+            case alignment::left:
+                x = 0;
+                break;
+            case alignment::center: {
+                if (str.length() >= config.columns) {
+                    x = 0;
+                } else {
+                    int position =
+                      (((config.columns / 2)) - (static_cast<int8_t>(str.length()) / 2));
+                    x = static_cast<uint8_t>((position < 0x00 ? 0x00 : position));
+                }
+                break;
+            }
+            case alignment::right: {
+                if (str.length() >= config.columns) {
+                    x = 0;
+                } else {
+                    x = static_cast<uint8_t>(config.columns - str.length());
+                }
+                break;
+            }
+        }
+
+        cursor_goto(x, y);
+        return result;
     }
 
   protected:
@@ -160,21 +207,6 @@ class hd44780 : public Features...
     }
 };
 
-namespace detail {
-
-template<auto T>
-struct interface_for
-{
-    static_assert(false,
-                  "Undefined interface for the specified descriptor. This is "
-                  "probably a driver bug.");
-    using type = std::false_type;
-};
-
-}
-
-template<auto T>
-using interface_for = detail::interface_for<T>::type;
 }
 
 #endif

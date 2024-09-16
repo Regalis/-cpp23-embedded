@@ -27,6 +27,7 @@
 #include <expected>
 #include <string_view>
 
+#include "../common.hpp"
 #include "../instructions.hpp"
 #include "timer.hpp"
 
@@ -45,6 +46,16 @@ struct with_animations
         });
 
         return str.length();
+    }
+
+    template<typename Self>
+    constexpr uint32_t animate_puts(this Self&& self,
+                                    std::string_view str,
+                                    line line_number,
+                                    alignment align = alignment::no_alignment)
+    {
+        self.prepare_cursor_position(str, line_number, align);
+        return self.animate_puts(str);
     }
 
     /**
@@ -74,6 +85,14 @@ struct with_animations
 
         return number_of_characters;
     }
+
+    constexpr uint32_t animate_clear_line(this auto&& self, line line_no)
+    {
+        self.cursor_goto(self.config.columns - 1, line_no);
+        auto result = self.animate_clear(self.config.columns);
+        self.cursor_goto(0, line_no);
+        return result;
+    }
 };
 }
 
@@ -82,6 +101,7 @@ using with_animations = detail::with_animations<50>;
 template<uint32_t CharactersDelayMilliseconds>
 using with_animations_custom_delay = detail::with_animations<CharactersDelayMilliseconds>;
 
+// TODO: update concept to cover all functions
 template<typename T>
 concept has_animations = requires(T lcd) {
     { lcd.animate_puts("Hello world") };
